@@ -3,12 +3,14 @@ from otter_api_wrapper.utils import save_plotly_figure
 import pandas as pd
 
 otter_api = OtterAPI(
-    api_token='<your API token>'
+    api_token='<your_api_token>',
 )
 df, inference_id = otter_api.run_sample_path(
     file_path='examples/data/rhabdomyosarcoma.genes.hugo.results',
     model_name='otter',
-    sample_name='rhabdo'
+    sample_name='rhabdo',
+    share_with=['<someone_else_email>'],
+    timeout=10
 )
 
 otter_api.download_pdf_report(inference_id, 'examples/results/rhabdo_report.pdf')

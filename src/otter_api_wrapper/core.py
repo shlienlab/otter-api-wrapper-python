@@ -16,28 +16,44 @@ class OtterAPI(object):
         self.headers = {'Authorization': 'Bearer {}'.format(self.api_token)}
 
 
-    def run_sample_path(self, file_path, model_name, atlas_version=None, sample_name=None):
+    def run_sample_path(
+            self, file_path, model_name, atlas_version=None, sample_name=None, share_with=None,
+            wait_for_result=True, timeout=300
+        ):
         if sample_name is None:
             sample_name = file_path.split('/')[-1]
         df = pd.read_csv(file_path, sep='\t')
-        return self.run_sample(df, model_name, atlas_version, sample_name)
+        return self.run_sample(
+            df, model_name, atlas_version, sample_name, share_with,
+            wait_for_result, timeout
+        )
     
-    def run_sample(self, df, model_name, atlas_version, sample_name):
+    def run_sample(
+            self, df, model_name, atlas_version, sample_name, share_with,
+            wait_for_result=True, timeout=1
+        ):
         df = df.to_dict(orient='list')
         post_data = {'version': 'otter', 'data': df, 'name': sample_name}
+        if share_with is not None:
+            post_data['share_with'] = share_with
         r = requests.post(os.path.join(self.base_api_url, 'inference'), json=post_data, headers=self.headers)
 
         if r.status_code == 200:
             res = json.loads(r.text)
 
-            return self.wait_for_sample(res['task_id']), res['inference_id']
+            if wait_for_result:
+                return self.wait_for_sample(res['task_id'], timeout), res['inference_id']
+            else:
+                return res['task_id'], res['inference_id']
         else:
             raise Exception('Error in submitting inference job')
 
 
-    def wait_for_sample(self, task_id):
+    def wait_for_sample(self, task_id, timeout):
         inference_link = 'inference_check?task_id={}'.format(task_id)
         request_link = os.path.join(self.base_api_url, inference_link)
+
+        start = time.time()
         
         while True:
             r_check = requests.get(request_link, headers=self.headers)
@@ -52,6 +68,9 @@ class OtterAPI(object):
             else:
                 raise Exception('Error in checking inference status')
             
+            if time.time() - start > timeout:
+                raise Exception('Timeout in waiting for inference result')
+
             time.sleep(1)
 
 
