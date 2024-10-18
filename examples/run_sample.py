@@ -6,6 +6,8 @@ import pandas as pd
 otter_api = OtterAPI(
     api_token='<your_api_token>',
 )
+
+# If wait_for_result is False, returns task_id and inference_id
 df, inference_id = otter_api.run_sample_path(
     file_path='examples/data/rhabdomyosarcoma.genes.hugo.results',
     model_name='otter',

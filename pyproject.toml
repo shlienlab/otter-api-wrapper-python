@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "otter_api_wrapper"
-version = "0.0.3"
+version = "0.0.5"
 authors = [
   { name="Pedro L. Ballester", email="pedro.lemosballester@sickkids.ca" },
 ]
