@@ -2,6 +2,7 @@ from otter_api_wrapper import OtterAPI
 from otter_api_wrapper.utils import save_plotly_figure
 import pandas as pd
 
+# Run a sample and get the results
 otter_api = OtterAPI(
     api_token='<your_api_token>',
 )
@@ -10,6 +11,7 @@ df, inference_id = otter_api.run_sample_path(
     model_name='otter',
     sample_name='rhabdo',
     share_with=['<someone_else_email>'],
+    wait_for_result=True,
     timeout=10
 )
 
