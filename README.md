@@ -21,7 +21,7 @@ This is a Python wrapper for the Otter API. This wrapper helps you run the API a
 ## Installation 
 
 ```
-pip install otter-api-wrapper
+pip install git+https://github.com/shlienlab/otter-api-wrapper-python
 ```
 
 ## Quickstart
