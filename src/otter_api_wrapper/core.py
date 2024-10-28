@@ -18,22 +18,22 @@ class OtterAPI(object):
 
     def run_sample_path(
             self, file_path, model_name, atlas_version=None, sample_name=None, share_with=None,
-            wait_for_result=True, timeout=300
+            save=False, wait_for_result=True, timeout=300
         ):
         if sample_name is None:
             sample_name = file_path.split('/')[-1]
         df = pd.read_csv(file_path, sep='\t')
         return self.run_sample(
             df, model_name, atlas_version, sample_name, share_with,
-            wait_for_result, timeout
+            save, wait_for_result, timeout
         )
     
     def run_sample(
             self, df, model_name, atlas_version, sample_name, share_with,
-            wait_for_result=True, timeout=1
+            save=False, wait_for_result=True, timeout=1
         ):
         df = df.to_dict(orient='list')
-        post_data = {'version': 'otter', 'data': df, 'name': sample_name}
+        post_data = {'version': model_name, 'data': df, 'name': sample_name, 'save': save}
         if share_with is not None:
             post_data['share_with'] = share_with
         r = requests.post(os.path.join(self.base_api_url, 'inference'), json=post_data, headers=self.headers)
