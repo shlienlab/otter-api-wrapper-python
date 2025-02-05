@@ -6,9 +6,7 @@ ATLAS_VERSION='v2'
 
 # Run a sample and get the results
 otter_api = OtterAPI(
-    api_token='ioq9Cwao1cSNPFyMwf52sh5BtBT2FQTG',
-    base_api_url='http://localhost:3000/api',
-    base_app_url='http://localhost:3000/app',
+    api_token='<your_api_token>',
 )
 
 # If wait_for_result is False, returns task_id and inference_id
