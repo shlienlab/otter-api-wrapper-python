@@ -17,7 +17,7 @@ class OtterAPI(object):
 
 
     def run_sample_path(
-            self, file_path, model_name, atlas_version=None, sample_name=None, share_with=None,
+            self, file_path, model_name, atlas_version='v1', sample_name=None, share_with=None,
             save=False, wait_for_result=True, timeout=300
         ):
         if sample_name is None:
@@ -33,7 +33,13 @@ class OtterAPI(object):
             save=False, wait_for_result=True, timeout=1
         ):
         df = df.to_dict(orient='list')
-        post_data = {'version': model_name, 'data': df, 'name': sample_name, 'save': save}
+        post_data = {
+            'version': model_name,
+            'atlas_version': atlas_version,
+            'data': df,
+            'name': sample_name,
+            'save': save
+        }
         if share_with is not None:
             post_data['share_with'] = share_with
         r = requests.post(os.path.join(self.base_api_url, 'inference'), json=post_data, headers=self.headers)
@@ -46,7 +52,7 @@ class OtterAPI(object):
             else:
                 return res['task_id'], res['inference_id']
         else:
-            raise Exception('Error in submitting inference job')
+            raise Exception('Error in submitting inference job: {}'.format(r.text))
 
 
     def wait_for_sample(self, task_id, timeout):
@@ -74,7 +80,7 @@ class OtterAPI(object):
             time.sleep(1)
 
 
-    def plot_sample(self, df_result, width=800, height=800):
+    def plot_sample(self, df_result, width=800, height=800, atlas_version='v1'):
         # df_result = df_result.apply(lambda x: round(x, 2))
         params = {
             'result': json.dumps(df_result.to_dict(orient='list')),
@@ -82,16 +88,20 @@ class OtterAPI(object):
             'height': height
         }
 
-        r_plot = requests.post(os.path.join(self.base_app_url, 'plot_result'), json=params, headers=self.headers)
-        
+        if (atlas_version == 'v1'):
+            r_plot = requests.post(os.path.join(self.base_app_url, 'plot_result'), json=params, headers=self.headers)
+        else:
+            r_plot = requests.post(os.path.join(self.base_app_url, atlas_version, 'plot_result'), json=params, headers=self.headers)
+
         if r_plot.status_code == 200:
             return json.loads(r_plot.json())
         else:
             raise Exception('Error in plotting result')
         
-    def get_explore_plots(self, class_name=None):
+    def get_explore_plots(self, class_name=None, atlas_version='v1'):
         data = {
-            'label': class_name
+            'label': class_name,
+            'atlas_version': atlas_version
         }
 
         r_plot = requests.get(os.path.join(self.base_app_url, 'get_explore_plots'), params=data, headers=self.headers)

@@ -34,10 +34,13 @@ import pandas as pd
 otter_api = OtterAPI(
     api_token='<your API token>'
 )
-df = otter_api.run_sample_path(
+df, inference_id = otter_api.run_sample_path(
     file_path='examples/data/rhabdomyosarcoma.genes.hugo.results',
     model_name='otter',
-    sample_name='rhabdo'
+    sample_name='rhabdo',
+    # share_with=['<someone_else_email>'],
+    wait_for_result=True,
+    timeout=300
 )
 ```
 
