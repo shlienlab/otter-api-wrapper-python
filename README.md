@@ -58,7 +58,7 @@ otter_api = OtterAPI(
 Then, running a sample is the next step. This sends the sample to our servers and runs our models. The sample is only stored in the server during runtime and is deleted shortly after:
 
 ```python
-df = otter_api.run_sample_path(
+df, inference_id = otter_api.run_sample_path(
     file_path='<path_to_sample>',
     model_name='<otter, hierarchical>', # check http://localhost:3000/app/inference for details
     sample_name='<custom name for the sample>'
